@@ -1,5 +1,6 @@
 package hexlet.code;
 
+import hexlet.code.schemas.NumberSchema;
 import hexlet.code.schemas.StringSchema;
 import org.junit.jupiter.api.Test;
 
@@ -28,5 +29,30 @@ public class ValidatorTest {
         assertFalse(schema.isValid("what does the fox say"));
         assertTrue(schema.minLength(minTrue).isValid("whatthe"));
         assertFalse(schema.minLength(minFalse).isValid("whatthe"));
+    }
+
+    @Test
+    public void testNumberSchema() {
+        Validator v = new Validator();
+        NumberSchema schema = v.number();
+        final int min = 2;
+        final int max = 17;
+
+        assertTrue(schema.isValid(null));
+
+        schema.required();
+        assertFalse(schema.isValid(null));
+        assertFalse(schema.isValid("5"));
+        assertTrue(schema.isValid(10));
+
+        assertTrue(schema.positive().isValid(10));
+        assertFalse(schema.isValid(-10));
+
+        schema.range(min, max);
+        assertTrue(schema.isValid(2));
+        assertTrue(schema.isValid(16));
+        assertFalse(schema.isValid(19));
+        assertFalse(schema.isValid(-5));
+
     }
 }
