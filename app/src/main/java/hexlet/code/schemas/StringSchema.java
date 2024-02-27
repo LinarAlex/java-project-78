@@ -2,19 +2,23 @@ package hexlet.code.schemas;
 
 public class StringSchema extends BaseSchema {
 
+    public StringSchema() {
+        addConditions(n -> n == null || n instanceof String);
+    }
+
     public final StringSchema required() {
-        addConditions(s -> s instanceof String && !"".equals(s));
-        setRequiredOn();
+        addNotNullCheck();
+        addConditions(n -> n != "");
         return this;
     }
 
-    public final StringSchema minLength(int num) {
-        addConditions(s -> s.toString().length() >= num);
+    public final StringSchema minLength(int min) {
+        addConditions(n -> n == null || ((String) n).length() >= min);
         return this;
     }
 
     public final StringSchema contains(String substring) {
-        addConditions(s -> s.toString().contains(substring));
+        addConditions(n -> n == null || ((String) n).contains(substring));
         return this;
     }
 }

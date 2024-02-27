@@ -4,28 +4,26 @@ import java.util.Map;
 
 public class MapSchema extends BaseSchema {
 
+    public MapSchema() {
+        addConditions(m -> m == null || (m instanceof Map));
+    }
+
     public final MapSchema required() {
-        addConditions(m -> m instanceof Map<?, ?> && m != null);
-        setRequiredOn();
+        addNotNullCheck();
         return this;
     }
 
     public final MapSchema sizeof(int size) {
-        addConditions(m -> m instanceof Map && ((Map<?, ?>) m).size() == size);
+        addConditions(m -> m == null || ((Map) m).size() == size);
         return this;
     }
 
-    public final MapSchema shape(Map<String, BaseSchema> newMap) {
-        addConditions(m -> checkingMap((Map<String, BaseSchema>) m, newMap));
-        return this;
+    public final void shape(Map<String, BaseSchema> schemas) {
+        addConditions(m -> checkingMap(schemas, (Map) m));
     }
 
-    private boolean checkingMap(Map<String, BaseSchema> original, Map<String, BaseSchema> shapedMap) {
-        for (Map.Entry<String, BaseSchema> map : shapedMap.entrySet()) {
-            String key = map.getKey();
-            if (!map.getValue().isValid(original.get(key))) {
-                return false;
-            }
-        } return true;
+    private boolean checkingMap(Map<String, BaseSchema> schemas, Map<String, Object> input) {
+        return input.entrySet().stream()
+               .allMatch(x -> schemas.get(x.getKey()).isValid(x.getValue()));
     }
 }

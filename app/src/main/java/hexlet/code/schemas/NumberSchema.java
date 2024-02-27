@@ -2,20 +2,22 @@ package hexlet.code.schemas;
 
 public class NumberSchema extends BaseSchema {
 
+    public NumberSchema() {
+        addConditions(p -> p == null || (p instanceof Integer));
+    }
+
     public final NumberSchema required() {
-        addConditions(n -> n instanceof Integer && n != null);
-        setRequiredOn();
+        addNotNullCheck();
         return this;
     }
 
     public final NumberSchema positive() {
-        addConditions(n -> n instanceof Integer && Integer.parseInt(n.toString()) > 0);
+        addConditions(p -> p == null || (Integer) p > 0);
         return this;
     }
 
     public final NumberSchema range(int min, int max) {
-        addConditions(n -> n instanceof Integer && Integer.parseInt(n.toString()) >= min
-                && Integer.parseInt(n.toString()) <= max);
+        addConditions(p -> (p == null) || (min <= (Integer) p && (Integer) p <= max));
         return this;
     }
 }

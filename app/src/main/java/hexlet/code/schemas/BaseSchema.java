@@ -1,29 +1,22 @@
 package hexlet.code.schemas;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 public class BaseSchema {
-    private List<Predicate> conditions = new ArrayList<>();
-    private boolean check;
+    private ArrayList<Predicate<Object>> conditions = new ArrayList<>();
 
-    protected final void addConditions(Predicate condition) {
-        conditions.add(condition);
+    public final boolean isValid(Object data) {
+        return conditions.stream().allMatch(p -> p.test(data));
     }
 
-    protected final void setRequiredOn() {
-        check = true;
+    public final void addConditions(Predicate<Object> predicate) {
+        conditions.add(predicate);
     }
 
-    public final boolean isValid(Object obj) {
-        if (obj == null) {
-            return !check;
-        }
-        for (Predicate condition : conditions) {
-            if (!condition.test(obj)) {
-                return false;
-            }
-        } return true;
+    public final void addNotNullCheck() {
+        addConditions(Objects::nonNull);
     }
+
 
 }
